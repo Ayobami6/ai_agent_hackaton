@@ -9,6 +9,7 @@ import pytz
 from typing import Any, List
 from .google_fit_service import GoogleFitService
 from dotenv import load_dotenv
+from .exceptions import ServiceException
 
 load_dotenv()
 
@@ -29,6 +30,11 @@ class HealthAgentService:
         weight_height = self.__fitness_service.get_weight_height_val()
         height = weight_height["height"]
         weight = weight_height["weight"]
+        if weight <= 0 or height <= 0:
+            raise ServiceException(
+                "You must update your weight and height on the google fit app",
+                status_code=400,
+            )
         tools = self.__composio_toolset.get_tools(
             actions=[Action.GOOGLECALENDAR_CREATE_EVENT]
         )
