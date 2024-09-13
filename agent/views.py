@@ -3,9 +3,19 @@ from rest_framework.views import APIView
 from sparky_utils.response import service_response
 from sparky_utils.exceptions import handle_internal_server_exception
 from .ai_service import HealthAgentService
-from exceptions import ServiceException
+from .exceptions import ServiceException
 
 # Create your views here.
+
+
+class RootPage(APIView):
+
+    def get(self, request, *args, **kwargs):
+        return service_response(
+            status="success",
+            message="Welcome to the AI Agent API",
+            status_code=200,
+        )
 
 
 class AIAgentAPIView(APIView):
@@ -15,7 +25,7 @@ class AIAgentAPIView(APIView):
         """get http request handler"""
         try:
             # get http request header to check authorization
-            authorization = request.META.get("Authorization")
+            authorization = request.META.get("HTTP_AUTHORIZATION")
             if not authorization:
                 return service_response(
                     status="error", message="Unauthorized", status_code=401
@@ -38,7 +48,7 @@ class AIAgentAPIView(APIView):
                         status_code=400,
                     )
             return service_response(status="success", message=response, status_code=200)
-        
+
         except ServiceException as e:
             return service_response(status="error", message=(str(e)), status_code=400)
         except Exception:

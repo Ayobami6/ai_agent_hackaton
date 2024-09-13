@@ -13,10 +13,11 @@ from .exceptions import ServiceException
 
 load_dotenv()
 
-
 class HealthAgentService:
 
     __composio_toolset = ComposioToolSet()
+    _instance = None
+    __pat = os.getenv("GITHUB_TOKEN")
 
     def __init__(self, headers: dict, client_email: str):
         self.headers = headers
@@ -35,12 +36,11 @@ class HealthAgentService:
                 "You must update your weight and height on the google fit app",
                 status_code=400,
             )
-        tools = self.__composio_toolset.get_tools(
-            actions=[Action.GOOGLECALENDAR_CREATE_EVENT]
-        )
+        tools = self.__composio_toolset.get_tools(actions=[Action.GMAIL_SEND_EMAIL])
         task = f"Send health reccommendation tips email for a person with height:{height} and weight:{weight} as a body with the following data to:{self.client_email}, subject:Health related quoute"
         res = self.__ai_service(task, tools)
         result = self.__composio_toolset.handle_tool_calls(res)
+        print(result)
         return result
 
     # ensuring the service object is singleton
@@ -52,9 +52,11 @@ class HealthAgentService:
     def __ai_service(self, task, tools: Any = None):
         """Handles third party ai services"""
 
+        print(f"This is pat {self.__pat} from ai service")
+
         client = ChatCompletionsClient(
             endpoint="https://models.inference.ai.azure.com",
-            credential=AzureKeyCredential(os.getenv("GITHUB_TOKEN")),
+            credential=AzureKeyCredential(f"{self.__pat}"),
         )
 
         response = None

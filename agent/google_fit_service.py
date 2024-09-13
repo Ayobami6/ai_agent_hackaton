@@ -1,11 +1,11 @@
-from dataclasses import dataclass
 from typing import List
 import requests
 
 
-@dataclass
 class GoogleFitService:
-    headers: dict
+    def __init__(self, headers: dict) -> None:
+        self.headers = headers
+
     _height_weight: List[str] = [
         "raw:com.google.height:com.google.android.apps.fitness:user_input",
         "raw:com.google.weight:com.google.android.apps.fitness:user_input",

@@ -12,6 +12,7 @@ django-cors-headers = "^4.4.0"
 python-dotenv = "^1.0.1"
 azure-ai-inference = "^1.0.0b4"
 composio-openai = "^0.5.19"
+pytz = "^2024.2"
 
 
 [build-system]
