@@ -35,6 +35,7 @@ class HealthAgentService:
         task = f"Send health reccommendation tips email for a person with height:{height} and weight:{weight} as a body with the following data to:{self.client_email}, subject:Health related quoute"
         res = self.__ai_service(task, tools)
         result = self.__composio_toolset.handle_tool_calls(res)
+        return result
 
     # ensuring the service object is singleton
     def __new__(cls, *args, **kwargs):

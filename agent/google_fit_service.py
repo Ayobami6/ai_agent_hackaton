@@ -26,11 +26,6 @@ class GoogleFitService:
 
     BASE_URL = "https://fitness.googleapis.com/fitness/v1/users/me/dataSources/{}/dataPointChanges"
 
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
     def get_weight_height_val(self) -> dict:
         weight_height_map = {}
         for url in self._height_weight:
