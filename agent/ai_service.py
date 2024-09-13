@@ -8,6 +8,9 @@ from datetime import datetime
 import pytz
 from typing import Any, List
 from .google_fit_service import GoogleFitService
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class HealthAgentService:
@@ -44,7 +47,7 @@ class HealthAgentService:
 
         client = ChatCompletionsClient(
             endpoint="https://models.inference.ai.azure.com",
-            credential=AzureKeyCredential("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"),
+            credential=AzureKeyCredential(os.getenv("GITHUB_TOKEN")),
         )
 
         response = None
