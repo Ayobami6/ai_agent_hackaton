@@ -1,0 +1,103 @@
+# Enhanced AI-based chatbot for health, diet, and lifestyle info
+
+def get_user_info():
+    user_data = {}
+
+    # Meal frequency questions
+    print("Let's talk about your daily meal habits.")
+    
+    user_data['breakfast_frequency'] = int(input("How many days a week do you eat breakfast? (0-7): "))
+    user_data['lunch_frequency'] = int(input("How many days a week do you eat lunch? (0-7): "))
+    user_data['dinner_frequency'] = int(input("How many days a week do you eat dinner? (0-7): "))
+    user_data['snacks_frequency'] = int(input("How many days a week do you snack between meals? (0-7): "))
+    
+    # Meal timing questions
+    print("\nNow, let's talk about the timing of your meals.")
+    
+    user_data['breakfast_time'] = input("What time do you typically have breakfast? (e.g., 7:00 AM, 9:00 AM): ")
+    user_data['lunch_time'] = input("What time do you usually have lunch? (e.g., 12:00 PM, 1:30 PM): ")
+    user_data['dinner_time'] = input("What time do you have dinner? (e.g., 7:00 PM, 9:00 PM): ")
+    user_data['snack_time'] = input("What time do you usually have snacks, if any? (e.g., between 10:00 AM and 3:00 PM): ")
+    
+    # Meal composition questions
+    print("\nDescribe the typical composition of your meals.")
+    user_data['breakfast_composition'] = input("What do you usually eat for breakfast? (e.g., eggs, toast, fruit, oatmeal): ")
+    user_data['lunch_composition'] = input("What do you typically have for lunch? (e.g., salad, sandwich, pasta): ")
+    user_data['dinner_composition'] = input("What do you usually eat for dinner? (e.g., chicken, rice, veggies): ")
+    user_data['snack_composition'] = input("What do you snack on? (e.g., chips, fruits, nuts, chocolate): ")
+    
+    # Get fast food consumption
+    user_data['fast_food_frequency'] = int(input("How many times a week do you eat fast food? "))
+    
+    # Get workout routine
+    user_data['workout_frequency'] = int(input("How many times a week do you work out? "))
+    
+    # Get food preferences
+    user_data['food_preferences'] = input("What are your basic food preferences? (e.g., vegetarian, vegan, non-vegetarian): ")
+    
+    # Get cuisine preferences
+    user_data['preferred_cuisine'] = input("What is your favorite cuisine? (e.g., Italian, Chinese, Indian): ")
+    
+    return user_data
+
+# Function to provide personalized feedback
+def analyze_data(user_data):
+    print("\n--- Personalized Health and Diet Feedback ---")
+    
+    # Breakfast frequency analysis
+    if user_data['breakfast_frequency'] < 4:
+        print("Skipping breakfast often can lead to low energy throughout the day. Consider having breakfast regularly.")
+    else:
+        print("Great job! You're having breakfast regularly.")
+    
+    # Lunch frequency and timing analysis
+    if user_data['lunch_frequency'] < 4:
+        print("Ensure you have a consistent lunch routine to maintain energy and focus during the day.")
+    if user_data['lunch_time'] > "2:00 PM":
+        print("Having a late lunch can disrupt your metabolism. Try to have lunch earlier in the day.")
+    
+    # Dinner frequency and timing analysis
+    if user_data['dinner_frequency'] < 5:
+        print("Skipping dinner can negatively affect your metabolism. Try to have a light dinner.")
+    if user_data['dinner_time'] > "9:00 PM":
+        print("Having dinner too late can interfere with digestion. Try to have dinner earlier.")
+    
+    # Snack frequency and composition
+    if user_data['snacks_frequency'] > 3:
+        print("You snack frequently. Opt for healthier options like fruits, nuts, or yogurt.")
+    else:
+        print("Your snack frequency seems moderate.")
+    
+    # Fast food consumption analysis
+    if user_data['fast_food_frequency'] > 2:
+        print("Consider reducing your fast food intake and opt for healthier alternatives like salads, wraps, or grilled items instead.")
+    else:
+        print("Your fast food intake is moderate.")
+    
+    # Workout frequency analysis
+    if user_data['workout_frequency'] < 3:
+        print("You should aim to work out at least 3 times a week for better health and fitness.")
+    else:
+        print("Great job on maintaining a regular workout routine!")
+    
+    # Meal composition feedback
+    print(f"\nHere's a summary of your typical meal choices:\n")
+    print(f"Breakfast: {user_data['breakfast_composition']} at around {user_data['breakfast_time']}")
+    print(f"Lunch: {user_data['lunch_composition']} at around {user_data['lunch_time']}")
+    print(f"Dinner: {user_data['dinner_composition']} at around {user_data['dinner_time']}")
+    print(f"Snacks: {user_data['snack_composition']} (Frequency: {user_data['snacks_frequency']} times per week)")
+    
+    # Food preferences and cuisine
+    print(f"\nYou prefer {user_data['food_preferences']} diet and enjoy {user_data['preferred_cuisine']} cuisine.")
+    print("\n----------------------------")
+
+# Main chatbot loop
+def chatbot():
+    print("Hello! I'm your personalized health and diet chatbot.")
+    user_data = get_user_info()
+    analyze_data(user_data)
+
+# Run the chatbot
+if __name__ == "__main__":
+    chatbot()
+    
