@@ -46,7 +46,16 @@ class AIAgentAPIView(APIView):
                 case "bp":
                     response = agent.bp_insight()
                 case "ask_anything":
+                    if question is None:
+                        return service_response(
+                            status="error",
+                            message="Question is required",
+                            status_code=400,
+                        )
                     response = agent.ask_anything(question)
+                case "general":
+                    _ = agent.general_insight()
+                    response = "Check your email for the general health recommendations base on your metrics"
                 case _:
                     return service_response(
                         status="error",

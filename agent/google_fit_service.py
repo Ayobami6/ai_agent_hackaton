@@ -27,7 +27,6 @@ class GoogleFitService:
         _height_weight
         + _blood_pressure_resource
         + _body_fat
-        + _cumulative_steps_count_resource
     )
 
     BASE_URL = "https://fitness.googleapis.com/fitness/v1/users/me/dataSources/{}/dataPointChanges"
@@ -40,7 +39,8 @@ class GoogleFitService:
             data = response.json()
             print(data)
             val = data["insertedDataPoint"][-1]["value"][0]["fpVal"]
-            weight_height_map[data["insertedDataPoint"][0]["dataTypeName"][11:]] = val
+            weight_height_map[data["insertedDataPoint"]
+                              [0]["dataTypeName"][11:]] = val
         return weight_height_map
 
     def get_body_fat_val(self) -> float:
@@ -69,6 +69,8 @@ class GoogleFitService:
             print(data)
             val = data["insertedDataPoint"][-1]["value"][0]["fpVal"]
             if data["insertedDataPoint"][0]["dataTypeName"][11:] == "blood_pressure":
-                fit_data["blood_pressure"] = f"{val}/{data["insertedDataPoint"][-1]["value"][1]["fpVal"]}"
+                fit_data["blood_pressure"] = f"{
+                    val}/{data["insertedDataPoint"][-1]["value"][1]["fpVal"]}"
             else:
-                fit_data[data["insertedDataPoint"][0]["dataTypeName"][11:]] = val
+                fit_data[data["insertedDataPoint"]
+                         [0]["dataTypeName"][11:]] = val

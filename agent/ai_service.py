@@ -65,7 +65,7 @@ class HealthAgentService:
         result = response.choices[0].message.content
         return result
 
-    def bp_insight(self) -> Any:
+    def bp_insight(self) -> str:
         """Get AI Agent insight and health recommendation on blood pressure level"""
         bp, numerator, denom = self.__fitness_service.get_bp_data()
         if int(numerator) <= 0 or int(denom) <= 0:
@@ -77,6 +77,19 @@ class HealthAgentService:
         {bp} provided give a physician recommendations on management and cure if above standard threshold or recommendations to maintain and stay healthy if normal. Also don't fail to mention some common side effects of high blood pressure if the blood pressure is too low or too high"""
         response = self.__ai_service(task)
         result = response.choices[0].message.content
+        return result
+
+    def general_insight(self) -> Any:
+        """Get general insight based fitness data
+        """
+        data = self.__fitness_service.get_data()
+        print(data)
+        tools = self.__composio_toolset.get_tools(
+            actions=[Action.GMAIL_SEND_EMAIL])
+        task = f"""Send health recommendations email for a general health check with this health data \
+        {data} to: {self.client_email}subject: General health check"""
+        res = self.__ai_service(task, tools)
+        result = self.__composio_toolset.handle_tool_calls(res)
         return result
 
     # ensuring the service object is singleton
