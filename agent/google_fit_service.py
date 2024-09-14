@@ -14,7 +14,7 @@ class GoogleFitService:
         "raw:com.google.blood_pressure:com.google.android.apps.fitness:user_input"
     ]
     _cumulative_steps_count_resource: List[str] = [
-        "derived:com.google.step_count.cumulative:com.google.android.gms:HXY:A9 Pro:9cc6da4c:soft_step_counter"
+        "derived:com.google.step_count.delta:com.google.android.gms:estimated_steps"
     ]
     _sleep_resource: List[str] = [
         "derived:com.google.sleep.segment:com.google.android.gms:merged"
@@ -23,6 +23,13 @@ class GoogleFitService:
         "derived:com.google.body.fat.percentage:com.google.android.gms:merged"
     ]
     _instance = None
+
+    _all = (
+        _height_weight
+        + _blood_pressure_resource
+        + _body_fat
+        + _cumulative_steps_count_resource
+    )
 
     BASE_URL = "https://fitness.googleapis.com/fitness/v1/users/me/dataSources/{}/dataPointChanges"
 
@@ -36,3 +43,33 @@ class GoogleFitService:
             val = data["insertedDataPoint"][-1]["value"][0]["fpVal"]
             weight_height_map[data["insertedDataPoint"][0]["dataTypeName"][11:]] = val
         return weight_height_map
+
+    def get_body_fat_val(self) -> float:
+        resource_url = self.BASE_URL.format(self._body_fat[0])
+        response = requests.get(resource_url, headers=self.headers)
+        data = response.json()
+        print(data)
+        val = data["insertedDataPoint"][-1]["value"][0]["fpVal"]
+        return val
+
+    def get_bp_data(self) -> str:
+        resource_url = self.BASE_URL.format(self._blood_pressure_resource[0])
+        response = requests.get(resource_url, headers=self.headers)
+        data = response.json()
+        numerator = data["insertedDataPoint"][0]["value"][0]["fpVal"]
+        denom = data["insertedDataPoint"][-1]["value"][1]["fpVal"]
+        bp = f"{numerator}/{denom}"
+        return bp
+
+    def get_data(self) -> str:
+        fit_data = {}
+        for resource in self._all:
+            resource_url = self.BASE_URL.format(resource)
+            response = requests.get(resource_url, headers=self.headers)
+            data = response.json()
+            print(data)
+            val = data["insertedDataPoint"][-1]["value"][0]["fpVal"]
+            if data["insertedDataPoint"][0]["dataTypeName"][11:] == "blood_pressure":
+                fit_data["blood_pressure"] = f"{val}/{data["insertedDataPoint"][-1]["value"][1]["fpVal"]}"
+            else:
+                fit_data[data["insertedDataPoint"][0]["dataTypeName"][11:]] = val

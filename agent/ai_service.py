@@ -13,6 +13,7 @@ from .exceptions import ServiceException
 
 load_dotenv()
 
+
 class HealthAgentService:
 
     __composio_toolset = ComposioToolSet()
@@ -43,6 +44,26 @@ class HealthAgentService:
         print(result)
         return result
 
+    def fat_insight(self):
+        """Get AI Insight base on your body fat"""
+        weight_height = self.__fitness_service.get_weight_height_val()
+        weight = weight_height["weight"]
+        if weight <= 0:
+            raise ServiceException(
+                "You must update your weight on the google fit app",
+                status_code=400,
+            )
+        task = f"Give me health"
+        res = self.__ai_service(task)
+        result = self.__composio_toolset.handle_tool_calls(res)
+        print(result)
+        return result
+
+    def ask_anything(self, task):
+        """Ask anything from the ai agent"""
+        response = self.__ai_service(task)
+        return response
+
     # ensuring the service object is singleton
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -51,8 +72,6 @@ class HealthAgentService:
 
     def __ai_service(self, task, tools: Any = None):
         """Handles third party ai services"""
-
-        print(f"This is pat {self.__pat} from ai service")
 
         client = ChatCompletionsClient(
             endpoint="https://models.inference.ai.azure.com",
@@ -64,7 +83,7 @@ class HealthAgentService:
         if tools:
             response = client.complete(
                 messages=[
-                    SystemMessage(content="You are a helpful assistant."),
+                    SystemMessage(content="You are a helpful health physician."),
                     UserMessage(content=task),
                 ],
                 tools=tools,
@@ -76,7 +95,7 @@ class HealthAgentService:
         else:
             response = client.complete(
                 messages=[
-                    SystemMessage(content="You are a helpful assistant."),
+                    SystemMessage(content="You are a helpful health physician."),
                     UserMessage(content=task),
                 ],
                 model="gpt-4o",
