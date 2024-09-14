@@ -40,7 +40,9 @@ class AIAgentAPIView(APIView):
             match action:
                 case "weight_height":
                     _ = agent.get_weight_height_insight()
-                    response = "An email as containing expert recommendations has been sent to your email"
+                    response = "An email containing expert recommendations has been sent to your email"
+                case "bp":
+                    response = agent.bp_insight()
                 case _:
                     return service_response(
                         status="error",

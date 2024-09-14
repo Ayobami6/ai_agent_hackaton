@@ -32,13 +32,13 @@ class HealthAgentService:
         weight_height = self.__fitness_service.get_weight_height_val()
         height = weight_height["height"]
         weight = weight_height["weight"]
-        if weight <= 0 or height <= 0:
+        if int(weight) <= 0 or int(height) <= 0:
             raise ServiceException(
                 "You must update your weight and height on the google fit app",
                 status_code=400,
             )
         tools = self.__composio_toolset.get_tools(actions=[Action.GMAIL_SEND_EMAIL])
-        task = f"Send health reccommendation tips email for a person with height:{height} and weight:{weight} as a body with the following data to:{self.client_email}, subject:Health related quoute"
+        task = f"Send health recommendations tips email for a person with height:{height} and weight:{weight} as a body with the following data to:{self.client_email}, subject:Health related quoute"
         res = self.__ai_service(task, tools)
         result = self.__composio_toolset.handle_tool_calls(res)
         print(result)
@@ -46,23 +46,37 @@ class HealthAgentService:
 
     def fat_insight(self):
         """Get AI Insight base on your body fat"""
-        weight_height = self.__fitness_service.get_weight_height_val()
-        weight = weight_height["weight"]
-        if weight <= 0:
+        body_fat = self.__fitness_service.get_body_fat_val()
+        if int(body_fat) <= 0:
             raise ServiceException(
                 "You must update your weight on the google fit app",
                 status_code=400,
             )
-        task = f"Give me health"
+        task = f"Give me health recommendations base on my body fat{body_fat}"
         res = self.__ai_service(task)
-        result = self.__composio_toolset.handle_tool_calls(res)
-        print(result)
+        result = res.choices[0].message.content
         return result
 
     def ask_anything(self, task):
         """Ask anything from the ai agent"""
         response = self.__ai_service(task)
-        return response
+        result = response.choices[0].message.content
+        return result
+
+    def bp_insight(self) -> Any:
+        """Get AI Agent insight and health recommendation on blood pressure level"""
+        bp, numerator, denom = self.__fitness_service.get_bp_data()
+        if int(numerator) <= 0 or int(denom) <= 0:
+            raise ServiceException(
+                "You must update your blood pressure on the google fit app",
+                status_code=400,
+            )
+        task: str = (
+            f"Based on the blood pressure {bp} provided give a physician recommendations on management and cure if above standard threshold or recommendations to maintain and stay healthy if normal. Also don't fail to mention some common side effects of high blood pressure if the blood pressure is too low or too high",
+        )
+        response = self.__ai_service(task)
+        result = response.choices[0].message.content
+        return result
 
     # ensuring the service object is singleton
     def __new__(cls, *args, **kwargs):

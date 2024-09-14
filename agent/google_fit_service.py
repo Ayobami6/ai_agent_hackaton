@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 import requests
 
 
@@ -22,9 +22,8 @@ class GoogleFitService:
     _body_fat: List[str] = [
         "derived:com.google.body.fat.percentage:com.google.android.gms:merged"
     ]
-    _instance = None
 
-    _all = (
+    _all: List[str] = (
         _height_weight
         + _blood_pressure_resource
         + _body_fat
@@ -52,14 +51,14 @@ class GoogleFitService:
         val = data["insertedDataPoint"][-1]["value"][0]["fpVal"]
         return val
 
-    def get_bp_data(self) -> str:
+    def get_bp_data(self) -> Tuple[str]:
         resource_url = self.BASE_URL.format(self._blood_pressure_resource[0])
         response = requests.get(resource_url, headers=self.headers)
         data = response.json()
         numerator = data["insertedDataPoint"][0]["value"][0]["fpVal"]
         denom = data["insertedDataPoint"][-1]["value"][1]["fpVal"]
         bp = f"{numerator}/{denom}"
-        return bp
+        return bp, numerator, denom
 
     def get_data(self) -> str:
         fit_data = {}
