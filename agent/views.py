@@ -33,8 +33,10 @@ class AIAgentAPIView(APIView):
             headers = {"Authorization": authorization}
             client_email = request.data.get("email")
             # create an instance of HealthAgentService
-            agent = HealthAgentService(headers=headers, client_email=client_email)
+            agent = HealthAgentService(
+                headers=headers, client_email=client_email)
             action = request.data.get("action")
+            question = request.data.get("question")
             response = None
             # TODO: call AI service based on the action and client_email
             match action:
@@ -43,6 +45,8 @@ class AIAgentAPIView(APIView):
                     response = "An email containing expert recommendations has been sent to your email"
                 case "bp":
                     response = agent.bp_insight()
+                case "ask_anything":
+                    response = agent.ask_anything(question)
                 case _:
                     return service_response(
                         status="error",

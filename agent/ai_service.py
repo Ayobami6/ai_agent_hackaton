@@ -37,8 +37,10 @@ class HealthAgentService:
                 "You must update your weight and height on the google fit app",
                 status_code=400,
             )
-        tools = self.__composio_toolset.get_tools(actions=[Action.GMAIL_SEND_EMAIL])
-        task = f"Send health recommendations tips email for a person with height:{height} and weight:{weight} as a body with the following data to:{self.client_email}, subject:Health related quoute"
+        tools = self.__composio_toolset.get_tools(
+            actions=[Action.GMAIL_SEND_EMAIL])
+        task = f"Send health recommendations tips email for a person with height:{height} and weight:{
+            weight} as a body with the following data to:{self.client_email}, subject:Health related quoute"
         res = self.__ai_service(task, tools)
         result = self.__composio_toolset.handle_tool_calls(res)
         print(result)
@@ -71,9 +73,8 @@ class HealthAgentService:
                 "You must update your blood pressure on the google fit app",
                 status_code=400,
             )
-        task: str = (
-            f"Based on the blood pressure {bp} provided give a physician recommendations on management and cure if above standard threshold or recommendations to maintain and stay healthy if normal. Also don't fail to mention some common side effects of high blood pressure if the blood pressure is too low or too high",
-        )
+        task: str = f"""Based on the blood pressure
+        {bp} provided give a physician recommendations on management and cure if above standard threshold or recommendations to maintain and stay healthy if normal. Also don't fail to mention some common side effects of high blood pressure if the blood pressure is too low or too high"""
         response = self.__ai_service(task)
         result = response.choices[0].message.content
         return result
@@ -97,7 +98,8 @@ class HealthAgentService:
         if tools:
             response = client.complete(
                 messages=[
-                    SystemMessage(content="You are a helpful health physician."),
+                    SystemMessage(
+                        content="You are a helpful health physician."),
                     UserMessage(content=task),
                 ],
                 tools=tools,
@@ -109,7 +111,8 @@ class HealthAgentService:
         else:
             response = client.complete(
                 messages=[
-                    SystemMessage(content="You are a helpful health physician."),
+                    SystemMessage(
+                        content="You are a helpful health physician."),
                     UserMessage(content=task),
                 ],
                 model="gpt-4o",
