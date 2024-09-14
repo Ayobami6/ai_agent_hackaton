@@ -56,6 +56,9 @@ class AIAgentAPIView(APIView):
                 case "general":
                     _ = agent.general_insight()
                     response = "Check your email for the general health recommendations base on your metrics"
+                case "workout_event":
+                    _ = agent.create_workout_event()
+                    response = "A one week 30mins workout event has been created in your Google Calendar"
                 case _:
                     return service_response(
                         status="error",

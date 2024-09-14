@@ -92,6 +92,32 @@ class HealthAgentService:
         result = self.__composio_toolset.handle_tool_calls(res)
         return result
 
+    def create_workout_event(self) -> Any:
+        """Creates a google calendar workout event
+        """
+        weight_height = self.__fitness_service.get_weight_height_val()
+        height = weight_height["height"]
+        weight = weight_height["weight"]
+        if int(weight) <= 0 or int(height) <= 0:
+            raise ServiceException(
+                "You must update your weight and height on the google fit app",
+                status_code=400,
+            )
+        fat = self.__fitness_service.get_body_fat_val()
+        tools = self.__composio_toolset.get_tools(
+            actions=[Action.GOOGLECALENDAR_CREATE_EVENT])
+        current_time = datetime.now(pytz.timezone('UTC')).astimezone()
+
+        current_timezone = current_time.tzname()
+        print(current_time, current_timezone)
+        # task = f"""create a one week 30mins workout event in my google calendar on this email:ayobamidele006@gmail.com with a summary of what kind of workout activity you recommend base on my height:{height}\
+        #     and weight{weight} from my current time:{current_time} with timezone:{current_timezone}"""
+        task = f"""create a one week 30mins workout event in my google calendar on this email:{self.client_email} with a summary of what kind of workout activity you recommend base on height:{height} and weight:{weight} from current
+        time:{current_time} with timezone:{current_timezone}"""
+        res = self.__ai_service(task, tools)
+        result = self.__composio_toolset.handle_tool_calls(res)
+        return result
+
     # ensuring the service object is singleton
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -109,10 +135,11 @@ class HealthAgentService:
         response = None
 
         if tools:
+            print("called")
             response = client.complete(
                 messages=[
                     SystemMessage(
-                        content="You are a helpful health physician."),
+                        content="You are a helpful assistant."),
                     UserMessage(content=task),
                 ],
                 tools=tools,
