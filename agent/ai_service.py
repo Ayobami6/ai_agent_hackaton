@@ -103,7 +103,6 @@ class HealthAgentService:
                 "You must update your weight and height on the google fit app",
                 status_code=400,
             )
-        fat = self.__fitness_service.get_body_fat_val()
         tools = self.__composio_toolset.get_tools(
             actions=[Action.GOOGLECALENDAR_CREATE_EVENT])
         current_time = datetime.now(pytz.timezone('UTC')).astimezone()
