@@ -1,5 +1,6 @@
 from typing import List, Tuple
 import requests
+from .exceptions import ServiceException
 
 
 class GoogleFitService:
@@ -37,7 +38,11 @@ class GoogleFitService:
             resource_url = self.BASE_URL.format(url)
             response = requests.get(resource_url, headers=self.headers)
             data = response.json()
-            print(data)
+            if data["insertedDataPoint"] == []:
+                raise ServiceException(
+                    "No data found for weight and height",
+                    status_code=404,
+                )
             val = data["insertedDataPoint"][-1]["value"][0]["fpVal"]
             weight_height_map[data["insertedDataPoint"]
                               [0]["dataTypeName"][11:]] = val
@@ -47,7 +52,11 @@ class GoogleFitService:
         resource_url = self.BASE_URL.format(self._body_fat[0])
         response = requests.get(resource_url, headers=self.headers)
         data = response.json()
-        print(data)
+        if data["insertedDataPoint"] == []:
+            raise ServiceException(
+                "No data found for body fat",
+                status_code=404,
+            )
         val = data["insertedDataPoint"][-1]["value"][0]["fpVal"]
         return val
 
@@ -55,6 +64,11 @@ class GoogleFitService:
         resource_url = self.BASE_URL.format(self._blood_pressure_resource[0])
         response = requests.get(resource_url, headers=self.headers)
         data = response.json()
+        if data["insertedDataPoint"] == []:
+            raise ServiceException(
+                "No data found for blood pressure",
+                status_code=404,
+            )
         numerator = data["insertedDataPoint"][0]["value"][0]["fpVal"]
         denom = data["insertedDataPoint"][-1]["value"][1]["fpVal"]
         bp = f"{numerator}/{denom}"
@@ -66,7 +80,11 @@ class GoogleFitService:
             resource_url = self.BASE_URL.format(resource)
             response = requests.get(resource_url, headers=self.headers)
             data = response.json()
-            print(data)
+            if data["insertedDataPoint"] == []:
+                raise ServiceException(
+                    f"No data found for {resource}",
+                    status_code=404,
+                )
             val = data["insertedDataPoint"][-1]["value"][0]["fpVal"]
             if data["insertedDataPoint"][0]["dataTypeName"][11:] == "blood_pressure":
                 fit_data["blood_pressure"] = f"{
